@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 
@@ -37,6 +38,20 @@ func GetSongs(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, songList)
 }
 
+// GetSong responds with a particular song by ID
+func GetSong(c *gin.Context) {
+	id := c.Param("id")
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if _, exist := songs[id]; !exist {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
+	}
+
+	c.IndentedJSON(http.StatusOK, songs[id])
+}
+
 // PostSong adds a song to the songs slice
 func PostSong(c *gin.Context) {
 	var newSong models.Song
@@ -62,7 +77,7 @@ func DeleteSong(c *gin.Context) {
 	defer mu.Unlock()
 
 	if _, exist := songs[id]; !exist {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": "Song not found"})
+		c.IndentedJSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
 	}
 
 	delete(songs, id)
