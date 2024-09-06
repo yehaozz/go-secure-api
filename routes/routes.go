@@ -10,5 +10,6 @@ func RegisterRoutes(r *gin.Engine) {
 	r.GET("/songs", handlers.GetSongs)
 	r.GET("/songs/:id", handlers.GetSong)
 	r.POST("/songs", handlers.PostSong)
+	r.PUT("/songs/:id", handlers.UpdateSong)
 	r.DELETE("/songs/:id", handlers.DeleteSong)
 }

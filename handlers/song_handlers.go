@@ -46,10 +46,46 @@ func GetSong(c *gin.Context) {
 	defer mu.Unlock()
 
 	if _, exist := songs[id]; !exist {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
 	}
 
 	c.IndentedJSON(http.StatusOK, songs[id])
+}
+
+// UpdateSong updates an existing song by ID
+func UpdateSong(c *gin.Context) {
+	id := c.Param("id")
+	var updatedSong models.Song
+
+	// Bind the received JSON to newSong
+	if err := c.BindJSON(&updatedSong); err != nil {
+		return
+	}
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	existingSong, exist := songs[id]
+	if !exist {
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
+		return
+	}
+
+	// Update the fields of the existing song
+	if updatedSong.Title != "" {
+		existingSong.Title = updatedSong.Title
+	}
+	if updatedSong.Artist != "" {
+		existingSong.Artist = updatedSong.Artist
+	}
+	if updatedSong.Rating != nil {
+		existingSong.Rating = updatedSong.Rating
+	}
+
+	// Save the updated song
+	songs[id] = existingSong
+
+	c.IndentedJSON(http.StatusOK, existingSong)
 }
 
 // PostSong adds a song to the songs slice
@@ -77,7 +113,7 @@ func DeleteSong(c *gin.Context) {
 	defer mu.Unlock()
 
 	if _, exist := songs[id]; !exist {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
 	}
 
 	delete(songs, id)
