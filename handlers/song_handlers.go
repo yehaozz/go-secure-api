@@ -13,7 +13,21 @@ var songs = []models.Song{
 	{ID: "3", Title: "Coco Elva Tia", Artist: "MaSiWei", Rate: 4.7},
 }
 
-// getSongs responds with the list of all songs as JSON
+// GetSongs responds with the list of all songs as JSON
 func GetSongs(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, songs)
+}
+
+// PostSong adds a song to the songs slice
+func PostSong(c *gin.Context) {
+	var newSong models.Song
+
+	// Bind the received JSON to newSong
+	if err := c.BindJSON(&newSong); err != nil {
+		return
+	}
+
+	// Add the newSong to the slice
+	songs = append(songs, newSong)
+	c.IndentedJSON(http.StatusCreated, newSong)
 }

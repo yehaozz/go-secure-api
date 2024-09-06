@@ -8,4 +8,5 @@ import (
 // RegisterRoutes defines the API routes
 func RegisterRoutes(r *gin.Engine) {
 	r.GET("/songs", handlers.GetSongs)
+	r.POST("/songs", handlers.PostSong)
 }
