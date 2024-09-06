@@ -9,4 +9,5 @@ import (
 func RegisterRoutes(r *gin.Engine) {
 	r.GET("/songs", handlers.GetSongs)
 	r.POST("/songs", handlers.PostSong)
+	r.DELETE("/songs/:id", handlers.DeleteSong)
 }

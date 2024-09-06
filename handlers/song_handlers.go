@@ -47,9 +47,24 @@ func PostSong(c *gin.Context) {
 	}
 
 	mu.Lock()
+	defer mu.Unlock()
 	newSong.ID = generateID()
 	songs[newSong.ID] = newSong
-	mu.Unlock()
 
 	c.IndentedJSON(http.StatusCreated, newSong)
+}
+
+// DeleteSong deletes a song by ID
+func DeleteSong(c *gin.Context) {
+	id := c.Param("id")
+
+	mu.Lock()
+	defer mu.Unlock()
+
+	if _, exist := songs[id]; !exist {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"error": "Song not found"})
+	}
+
+	delete(songs, id)
+	c.Status(http.StatusNoContent)
 }
