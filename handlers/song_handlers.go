@@ -47,6 +47,7 @@ func GetSong(c *gin.Context) {
 
 	if _, exist := songs[id]; !exist {
 		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
+		return
 	}
 
 	c.IndentedJSON(http.StatusOK, songs[id])
@@ -114,6 +115,7 @@ func DeleteSong(c *gin.Context) {
 
 	if _, exist := songs[id]; !exist {
 		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("song with id %s not found", id)})
+		return
 	}
 
 	delete(songs, id)
