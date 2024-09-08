@@ -8,9 +8,9 @@ import (
 
 // RegisterRoutes defines the API routes
 func RegisterRoutes(r *gin.Engine) {
-	r.GET("/songs", middleware.JWTMiddleware(), handlers.GetSongs)
+	r.GET("/songs", handlers.GetSongs)
 	r.GET("/songs/:id", handlers.GetSong)
-	r.POST("/songs", handlers.PostSong)
-	r.PUT("/songs/:id", handlers.UpdateSong)
-	r.DELETE("/songs/:id", handlers.DeleteSong)
+	r.POST("/songs", middleware.JWTMiddleware(), handlers.PostSong)
+	r.PUT("/songs/:id", middleware.JWTMiddleware(), handlers.UpdateSong)
+	r.DELETE("/songs/:id", middleware.JWTMiddleware(), handlers.DeleteSong)
 }

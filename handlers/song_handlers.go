@@ -28,15 +28,6 @@ func generateID() string {
 
 // GetSongs responds with the list of all songs as JSON
 func GetSongs(c *gin.Context) {
-	claims, exists := c.Get("claims")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "claims do not exist"})
-		return
-	}
-	jwtClaims := claims.(*middleware.JWTClaims)
-	// Use claims (e.g., Subject, Audience)
-	fmt.Printf("Successfully authenticated - User ID: %s\n", jwtClaims.Subject)
-
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -101,6 +92,15 @@ func UpdateSong(c *gin.Context) {
 
 // PostSong adds a song to the songs slice
 func PostSong(c *gin.Context) {
+	claims, exists := c.Get("claims")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "claims do not exist"})
+		return
+	}
+	jwtClaims := claims.(*middleware.JWTClaims)
+	// Use claims (e.g., Subject, Audience)
+	fmt.Printf("Successfully authenticated - User ID: %s\n", jwtClaims.Subject)
+
 	var newSong models.Song
 
 	// Bind the received JSON to newSong
