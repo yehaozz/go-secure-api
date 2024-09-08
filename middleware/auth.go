@@ -1,57 +1,17 @@
 package middleware
 
 import (
-	"context"
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/lestrrat-go/jwx/jwk"
 )
 
 const (
-	jwksURL    = "https://www.googleapis.com/oauth2/v3/certs"
-	authPrefix = "Bearer "
+	authPrefix   = "Bearer "
+	tokenInfoURL = "https://oauth2.googleapis.com/tokeninfo?access_token="
 )
-
-// JWTClaims represents the JWT claims structure
-type JWTClaims struct {
-	Audience string `json:"aud"`
-	Issuer   string `json:"iss"`
-	Subject  string `json:"sub"`
-	Expiry   int64  `json:"exp"`
-	jwt.RegisteredClaims
-}
-
-// FetchPublicKey fetches the public key from the JWKS endpoint
-func FetchPublicKey(token *jwt.Token) (any, error) {
-	// Fetch the JWKS
-	set, err := jwk.Fetch(context.Background(), jwksURL)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch JWKS: %v", err)
-	}
-
-	// Find the key by kid (key id) in the JWT header
-	kid, found := token.Header["kid"]
-	if !found {
-		return nil, fmt.Errorf("no 'kid' in token header")
-	}
-
-	key, found := set.LookupKeyID(kid.(string))
-	if !found {
-		return nil, fmt.Errorf("no matchking key id found in JWKS")
-	}
-
-	var publicKey any
-	if err := key.Raw(&publicKey); err != nil {
-		return nil, fmt.Errorf("failed to parse public key: %v", err)
-	}
-
-	return publicKey, nil
-}
 
 // JWTMiddleware validates the JWT and checks its claims
 func JWTMiddleware() gin.HandlerFunc {
@@ -65,28 +25,28 @@ func JWTMiddleware() gin.HandlerFunc {
 		}
 		tokenString := strings.TrimPrefix(authHeader, authPrefix)
 
-		// Parse the tokenString JWT
-		// TODO what is a JWTClaim
-		token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, FetchPublicKey)
-		if err != nil {
+		// Call the Google Token Info endpoint to validate the token
+		resp, err := http.Get(tokenInfoURL + tokenString)
+		if err != nil || resp.StatusCode != http.StatusOK {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
+		defer resp.Body.Close()
 
-		if claims, ok := token.Claims.(*JWTClaims); ok && token.Valid {
-			// token is valid, proceed with further checks (expiry, issuer, etc.)
-			if claims.Expiry < time.Now().Unix() {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Token expired"})
-				return
-			}
-
-			// Add claims to the context, so they can be access in handlers
-			c.Set("claims", claims)
-			c.Next()
-		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		// Parse the response to extract claims
+		var claims map[string]any
+		if err := json.NewDecoder(resp.Body).Decode(&claims); err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Failed to decode token claims"})
+			c.Abort()
 			return
 		}
+
+		// Optionally: You can perform additional checks on claims if needed
+		// Example: if claims["aud"] != "<expected_audience>" { ... }
+
+		// Add claims to the context
+		c.Set("claims", claims)
+		c.Next()
 	}
 }

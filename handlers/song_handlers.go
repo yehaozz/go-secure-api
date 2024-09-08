@@ -7,7 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/yehaozz/go-secure-api/middleware"
 	"github.com/yehaozz/go-secure-api/models"
 )
 
@@ -97,9 +96,8 @@ func PostSong(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "claims do not exist"})
 		return
 	}
-	jwtClaims := claims.(*middleware.JWTClaims)
 	// Use claims (e.g., Subject, Audience)
-	fmt.Printf("Successfully authenticated - User ID: %s\n", jwtClaims.Subject)
+	fmt.Printf("Successfully authenticated - claims: %v\n", claims)
 
 	var newSong models.Song
 
