@@ -5,6 +5,7 @@ go 1.22.0
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
+	k8s.io/utils v0.0.0-20240902221715-702e33fdd3c3
 )
 
 require (

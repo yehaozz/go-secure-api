@@ -10,12 +10,6 @@ import (
 	"github.com/yehaozz/go-secure-api/models"
 )
 
-// var songs = []models.Song{
-// 	{ID: "1", Title: "September", Artist: "Earth, Wind & Fire", Rating: 4.3},
-// 	{ID: "2", Title: "Fun For All", Artist: "Vinida", Rating: 4.7},
-// 	{ID: "3", Title: "Coco Elva Tia", Artist: "MaSiWei", Rating: 4.7},
-// }
-
 // songs is a map of id to song's data
 var songs = make(map[string]models.Song)
 var mu sync.Mutex
@@ -91,14 +85,6 @@ func UpdateSong(c *gin.Context) {
 
 // PostSong adds a song to the songs slice
 func PostSong(c *gin.Context) {
-	claims, exists := c.Get("claims")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "claims do not exist"})
-		return
-	}
-	// Use claims (e.g., Subject, Audience)
-	fmt.Printf("Successfully authenticated - claims: %v\n", claims)
-
 	var newSong models.Song
 
 	// Bind the received JSON to newSong
