@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: go-secure-api
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: go-secure-api
@@ -18,3 +18,10 @@ spec:
         imagePullPolicy: IfNotPresent # prevents k8s from pulling the image from a registry
         ports:
         - containerPort: 8080
+        resources:
+          requests:
+            cpu: "100m"      # Request 100 millicores of CPU
+            memory: "128Mi"  # Request 128 MiB of memory
+          limits:
+            cpu: "500m"      # Limit to 500 millicores of CPU
+            memory: "256Mi"  # Limit to 256 MiB of memory
