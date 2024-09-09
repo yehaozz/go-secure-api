@@ -7,15 +7,29 @@ This project focuses on building a small, cloud-native API service using Go, dep
 
 1. Set Up Development Environment:
 * Install Go, Docker, and kubectl for Kubernetes.
-* Choose a cloud provider (AWS, GCP, Azure) or use Minikube for local Kubernetes deployment.
+* Install kind for local Kubernetes deployment.
 
 2. Develop the API Service in Go:
-* Build a simple REST API service in Go (e.g., a basic task manager or a CRUD app for managing user data).
+* Build a simple REST API service in Golang to store music song info.
 * Implement routing, data handling, and basic error handling.
 * TODO: Connect to a cloud database like MongoDB or PostgreSQL.
 
 3. API Security with OAuth2:
-* Integrate OAuth2 for authentication, using a service like Auth0, Okta, or Firebase Authentication to manage OAuth2 tokens.
+* Integrate OAuth2 for authentication, using Google OAuth 2.0 playground to get access tokens that can be verified with Google Token Info endpoint.
 * Protect specific API endpoints so only authenticated users can access them.
 
 ### Containerization and Kubernetes Deployment
+1. Dockerize the Go Application:
+* Write a Dockerfile to containerize the Go API service.
+* Build and run the Docker container locally to ensure it works correctly.
+
+2. Deploy to Kubernetes:
+* Set up a kind cluster.
+* Create Kubernetes manifests for deploying the Go API service.
+
+3. Auto-scale deployment:
+* Set up Horizontal Pod Autoscaler (HPA) to automatically scale the number of pods based on CPU usage.
+```
+# Install metrics-server, and then add "- --kubelet-insecure-tls" to `.containers.args`
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
