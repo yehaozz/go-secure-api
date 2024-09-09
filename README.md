@@ -16,6 +16,11 @@ This project focuses on building a small, cloud-native API service using Go, dep
 
 3. API Security with OAuth2:
 * Integrate OAuth2 for authentication, using Google OAuth 2.0 playground to get access tokens that can be verified with Google Token Info endpoint.
+ - Get OAuth 2.0 access token from Google OAuth 2.0 playground: https://developers.google.com/oauthplayground/
+ - Example curl request to verify the authentication middleware
+ ```
+ curl -X POST localhost:8080/songs -i -H "Content-Type: application/json" -H "Authorization: Bearer <access_token>" -d '{"title": "Monday","artist": "Leah Dou","rating": 4.5}'
+ ```
 * Protect specific API endpoints so only authenticated users can access them.
 
 ### Containerization and Kubernetes Deployment
@@ -33,3 +38,12 @@ This project focuses on building a small, cloud-native API service using Go, dep
 # Install metrics-server, and then add "- --kubelet-insecure-tls" to `.containers.args`
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 ```
+
+### Testing and Documentation
+1. Add unit tests for all the handlers package using Golang's testing package.
+```
+# To run the handlers tests
+go test -v ./handlers
+```
+
+2. Write a brief README to explain the steps of this project.
