@@ -1,7 +1,7 @@
 # go-secure-api
 
 ## Project Scope
-This project focuses on building a small, cloud-native API service using Go, deployed on Kubernetes, with OAuth2 for authentication. The goal is to practice developing a scalable, secure API in a distributed cloud environment with modern security protocols and infrastructure automation.
+This project focuses on building a small, cloud-native API service using Go, deployed on Kubernetes, with OAuth2 for authorization. The goal is to practice developing a scalable, secure API in a distributed cloud environment with modern security protocols and infrastructure automation.
 
 ### Set Up and Build API Service in Go
 
